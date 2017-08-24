@@ -5,8 +5,13 @@ currGlobalIndex = 0
 BOARD_WIDTH=50
 BOARD_HEIGHT = 50
 NUMOFFILES=10
-moves = []
-allBoards = []
+trainMoves = []
+testMoves = []
+validMoves = []
+# allBoards = []
+trainBoards = []
+testBoards = []
+validBoards = []
 def findWinner(snakes):
     max = 0;
     maxIndex = 0;
@@ -121,24 +126,52 @@ if __name__ == "__main__":
 			break;
                 drawSnakes(snakes)
 
-                allBoards.append(board)
-                if currState != 0:
-                    moves.append(findMove(lastSnakes,snakes, lastWinner))
-                board = board.transpose()
-                allBoards.append(board)
-                if currState != 0:
-                    moves.append(findMove(lastSnakes,snakes, lastWinner))
+        if currGlobalIndex%3==0:
+            trainBoards.append(board)
+            if currState != 0:
+                trainMoves.append(findMove(lastSnakes,snakes, lastWinner))
+        elif currGlobalIndex % 3 == 1:
+            validBoards.append(board)
+            if currState != 0:
+                validMoves.append(findMove(lastSnakes,snakes, lastWinner))
+        elif currGlobalIndex % 3 == 2:
+            testBoards.append(board)
+            if currState != 0:
+                testMoves.append(findMove(lastSnakes,snakes, lastWinner))
+            # allBoards.append(board)
+            # if currState != 0:
+            #     moves.append(findMove(lastSnakes,snakes, lastWinner))
+                # board = board.transpose()
+                # allBoards.append(board)
+                # if currState != 0:
+                #     moves.append(findMove(lastSnakes,snakes, lastWinner))
 
 
                 lastSnakes=snakes
                 lastWinner = findWinner(snakes);
 
-    numpyBoard = np.array(allBoards)
+    numpyTrainBoard = np.array(trainBoards)
     # np.save('./snake_json_files/'+ str(fileNumber) + '_parsed.npy',board,True,False)
-    np.save('./snake_json_files/trainingDataBoards', numpyBoard)
+    np.save('./snake_json_files/trainingDataBoards', numpyTrainBoard)
 
-    numpyMoves = np.array(moves)
+    numpyValidBoard = np.array(validBoards)
     # np.save('./snake_json_files/'+ str(fileNumber) + '_parsed.npy',board,True,False)
-    np.save('./snake_json_files/trainingDataMoves', numpyMoves)
+    np.save('./snake_json_files/validationDataBoards', numpyValidBoard)
+
+    numpyTestBoard = np.array(testBoards)
+    # np.save('./snake_json_files/'+ str(fileNumber) + '_parsed.npy',board,True,False)
+    np.save('./snake_json_files/testDataBoards', numpyTestBoard)
+
+    numpyTrainMoves = np.array(moves)
+    # np.save('./snake_json_files/'+ str(fileNumber) + '_parsed.npy',board,True,False)
+    np.save('./snake_json_files/trainingDataMoves', numpyTrainMoves)
+
+    numpyValidMoves = np.array(moves)
+    # np.save('./snake_json_files/'+ str(fileNumber) + '_parsed.npy',board,True,False)
+    np.save('./snake_json_files/validationDataMoves', numpyValidMoves)
+
+    numpyTestMoves = np.array(moves)
+    # np.save('./snake_json_files/'+ str(fileNumber) + '_parsed.npy',board,True,False)
+    np.save('./snake_json_files/testDataMoves', numpyTestMoves)
 
 1
