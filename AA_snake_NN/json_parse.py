@@ -12,6 +12,14 @@ validMoves = []
 trainBoards = []
 testBoards = []
 validBoards = []
+
+brushSuperApple = 6
+brushNormalApple = 5
+brushWinnerHead = 4
+brushWinnerBody = 3
+brushEnemyHead = 2
+brushEnemyBody = 1
+
 def findWinner(snakes):
     max = 0;
     maxIndex = 0;
@@ -23,9 +31,9 @@ def findWinner(snakes):
 
 #def drawLine(start, end, isWinner, isInvisible, isHead):
 def drawLine(start, end, isWinner, isHead):
-    brush = 1
+    brush = brushEnemyBody
     if isWinner:
-        brush = 2
+        brush = brushWinnerBody
 #    elif isInvisible:
 #        brush=0
 
@@ -47,9 +55,9 @@ def drawLine(start, end, isWinner, isHead):
                 board[i][start[1]]=brush
     if (isHead):
         if (isWinner):
-            board[start[0]][start[1]]=4
+            board[start[0]][start[1]]=brushWinnerHead
         else:
-            board[start[0]][start[1]] = 3
+            board[start[0]][start[1]] = brushEnemyHead
 
 def drawSnakes(snakes):
     winnerNum=findWinner(snakes)
@@ -103,6 +111,17 @@ def findMove(lastSnakes, currSnakes, lastWinner):
         else:                           #moved right
             return 3
 
+def sphere (winningSnake):
+    if (winningSnake[6][0]<25):
+        board = np.roll(board,(25-winningSnake[6][0]),axis=1)
+    elif (winningSnake[6][0]>25):
+        board = np.roll(board, (50 - (winningSnake[6][0] - 25)), axis=1)
+
+    if (winningSnake[6][1]<25):
+        board = np.roll(board,(25-winningSnake[6][0]),axis=0)
+    elif (winningSnake[6][1]>25):
+        board = np.roll(board, (50 - (winningSnake[6][0] - 25)), axis=0)
+
 if __name__ == "__main__":
     for fileNumber in range(0,NUMOFFILES):
         with open('./snake_json_files/'+ str(fileNumber) + '.json') as data_file:
@@ -116,15 +135,18 @@ if __name__ == "__main__":
 
                 superApple = tuple(map(int, splitData[0].split(' ')))
                 if superApple[0] != -1:
-                    board[superApple[0]][superApple[1]]=5
+                    board[superApple[0]][superApple[1]]=brushSuperApple
                 normalApple = tuple(map(int, splitData[1].split(' ')))
-                board[normalApple[0]][normalApple[1]] = 6
+                board[normalApple[0]][normalApple[1]] = brushNormalApple
 
                 snakes = [tuple(splitData[i].split(' ')) for i in range (2,6)]
 		
 		if (snakes[findWinner(snakes)][3]=='dead'):
 			break;
                 drawSnakes(snakes)
+
+        np.pad(board, 1, 'constant', constant_values=(brushEnemyBody))  # add border to board for sphering
+        sphere(snakes[findWinner(snakes)])
 
         if currGlobalIndex%3==0:
             trainBoards.append(board)
